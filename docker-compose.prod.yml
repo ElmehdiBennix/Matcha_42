@@ -1,0 +1,46 @@
+# ==========================================================
+#
+#
+# ==========================================================
+
+services:
+  # ==========================================================
+  #
+  # ==========================================================
+  proxy:
+    env_file:
+      - ./services/proxy/.env.prod
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # ==========================================================
+  #
+  # ==========================================================
+  frontend:
+    build:
+      target: production
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    image: matcha_frontend_image:latest-prod
+    env_file:
+      - ./services/frontend/.env.prod
+
+  # ==========================================================
+  #
+  # ==========================================================
+  backend:
+    build:
+      target: production
+      context: ./services/backend
+      dockerfile: Dockerfile
+    image: matcha_backend_image:latest-prod
+    env_file:
+      - ./services/backend/.env.prod
+
+  # ==========================================================
+  #
+  # ==========================================================
+  database:
+    env_file:
+      - ./services/database/.env.prod

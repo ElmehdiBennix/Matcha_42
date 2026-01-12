@@ -1,0 +1,106 @@
+# ==========================================================
+#
+#
+# ==========================================================
+
+x-common-labels: &common-labels
+  labels:
+    project: matcha
+
+# ==========================================================
+#
+# ==========================================================
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+# ==========================================================
+#
+# ==========================================================
+services:
+  # ==========================================================
+  #
+  # ==========================================================
+  proxy:
+    <<: *common-labels
+    build:
+      context: ./services/proxy
+      dockerfile: Dockerfile
+    image: matcha_proxy_image:v1
+    container_name: matcha_proxy
+    networks:
+      - web_network
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  # ==========================================================
+  #
+  # ==========================================================
+  frontend:
+    <<: *common-labels
+    container_name: matcha_frontend
+    networks:
+      - web_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ==========================================================
+  #
+  # ==========================================================
+  backend:
+    <<: *common-labels
+    container_name: matcha_backend
+    networks:
+      - web_network
+      - data_network
+    depends_on:
+      - database
+    restart: unless-stopped
+
+  # ==========================================================
+  #
+  # ==========================================================
+  database:
+    <<: *common-labels
+    build:
+      context: ./services/database
+      dockerfile: Dockerfile
+    image: matcha_database_image:v1
+    container_name: matcha_database
+    secrets:
+      - db_password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - data_network
+    restart: unless-stopped
+
+# ==========================================================
+#
+# ==========================================================
+volumes:
+  nginx_certs:
+    <<: *common-labels
+    name: matcha_nginx_certs_volume
+    driver: local
+
+  db_data:
+    <<: *common-labels
+    name: matcha_postgres_volume
+    driver: local
+
+# ==========================================================
+#
+# ==========================================================
+networks:
+  web_network:
+    driver: bridge
+
+  data_network:
+    driver: bridge
+    internal: true

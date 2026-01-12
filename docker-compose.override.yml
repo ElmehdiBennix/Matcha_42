@@ -1,0 +1,58 @@
+# ==========================================================
+#
+#
+# ==========================================================
+
+services:
+  # ==========================================================
+  #
+  # ==========================================================
+  proxy:
+    env_file:
+      - ./services/proxy/.env
+    ports:
+      - "8080:80"
+      - "4433:443"
+
+  # ==========================================================
+  #
+  # ==========================================================
+  frontend:
+    build:
+      target: development
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    image: matcha_frontend_image:latest-dev
+    env_file:
+      - ./services/frontend/.env
+    volumes:
+      - ./services/frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+
+  # ==========================================================
+  #
+  # ==========================================================
+  backend:
+    build:
+      target: development
+      context: ./services/backend
+      dockerfile: Dockerfile
+    image: matcha_backend_image:latest-dev
+    env_file:
+      - ./services/backend/.env
+    volumes:
+      - ./services/backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+
+  # ==========================================================
+  #
+  # ==========================================================
+  database:
+    env_file:
+      - ./services/database/.env
+    ports:
+      - "5432:5432"
