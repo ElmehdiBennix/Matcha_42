@@ -22,7 +22,7 @@ services:
       target: development
       context: ./services/frontend
       dockerfile: Dockerfile
-    image: matcha_frontend_image:latest-dev
+    image: matcha_frontend_image:${VERSION:-latest}-dev
     env_file:
       - ./services/frontend/.env
     volumes:
@@ -39,7 +39,7 @@ services:
       target: development
       context: ./services/backend
       dockerfile: Dockerfile
-    image: matcha_backend_image:latest-dev
+    image: matcha_backend_image:${VERSION:-latest}-dev
     env_file:
       - ./services/backend/.env
     volumes:

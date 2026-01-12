@@ -22,7 +22,7 @@ services:
       target: production
       context: ./services/frontend
       dockerfile: Dockerfile
-    image: matcha_frontend_image:latest-prod
+    image: matcha_frontend_image:${VERSION:-latest}-prod
     env_file:
       - ./services/frontend/.env.prod
 
@@ -34,7 +34,7 @@ services:
       target: production
       context: ./services/backend
       dockerfile: Dockerfile
-    image: matcha_backend_image:latest-prod
+    image: matcha_backend_image:${VERSION:-latest}-prod
     env_file:
       - ./services/backend/.env.prod
 

@@ -33,7 +33,7 @@ endif
 # Alert user of mode on every run
 $(info Current Environment: $(MODE_MSG) [File: $(COMPOSE_FILE)])
 
-COMPOSE := docker compose -f "$(COMPOSE_FILE)" -p "$(COMPOSE_PROJECT)" --env-file versioning.env
+COMPOSE := docker compose -f "$(COMPOSE_FILE)" -p "$(COMPOSE_PROJECT)" --env-file Versioning.env
 
 # ======================================================================================
 # HELP & GENERAL USAGE

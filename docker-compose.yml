@@ -5,7 +5,13 @@
 
 x-common-labels: &common-labels
   labels:
-    project: matcha
+    project.name: ${COMPOSE_PROJECT_NAME:-Matcha}
+    org.opencontainers.image.title: Matcha
+    org.opencontainers.image.description: A 42 Project datingapplication
+    org.opencontainers.image.authors: ${MAINTAINER_NAME}
+    org.opencontainers.image.version: ${VERSION}
+    org.opencontainers.image.source: ${REPOSITORY_URL}
+    org.opencontainers.image.licenses: ${LICENSE_TYPE}
 
 # ==========================================================
 #
@@ -26,7 +32,7 @@ services:
     build:
       context: ./services/proxy
       dockerfile: Dockerfile
-    image: matcha_proxy_image:v1
+    image: matcha_proxy_image:${VERSION:-latest}
     container_name: matcha_proxy
     networks:
       - web_network
@@ -68,7 +74,7 @@ services:
     build:
       context: ./services/database
       dockerfile: Dockerfile
-    image: matcha_database_image:v1
+    image: matcha_database_image:${VERSION:-latest}
     container_name: matcha_database
     secrets:
       - db_password

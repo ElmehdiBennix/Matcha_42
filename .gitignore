@@ -3,4 +3,5 @@ Docs/knowledge_base/
 GEMINI.md
 
 **/.env
+**/.env.prod
 **/!.env.example
