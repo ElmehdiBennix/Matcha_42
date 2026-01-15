@@ -7,18 +7,11 @@ x-common-labels: &common-labels
   labels:
     project.name: ${COMPOSE_PROJECT_NAME:-Matcha}
     org.opencontainers.image.title: Matcha
-    org.opencontainers.image.description: A 42 Project datingapplication
+    org.opencontainers.image.description: A 42 Project dating application
     org.opencontainers.image.authors: ${MAINTAINER_NAME}
     org.opencontainers.image.version: ${VERSION}
     org.opencontainers.image.source: ${REPOSITORY_URL}
     org.opencontainers.image.licenses: ${LICENSE_TYPE}
-
-# ==========================================================
-#
-# ==========================================================
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
 
 # ==========================================================
 #
@@ -28,8 +21,8 @@ services:
   #
   # ==========================================================
   proxy:
-    <<: *common-labels
     build:
+      <<: *common-labels
       context: ./services/proxy
       dockerfile: Dockerfile
     image: matcha_proxy_image:${VERSION:-latest}
@@ -76,10 +69,6 @@ services:
       dockerfile: Dockerfile
     image: matcha_database_image:${VERSION:-latest}
     container_name: matcha_database
-    secrets:
-      - db_password
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
