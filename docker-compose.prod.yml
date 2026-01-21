@@ -1,55 +1,83 @@
-# ==========================================================
-#
-#
-# ==========================================================
+# =====================================================================
+# name: docker-compose.prod.yml
+# description: this compose file is added into base for production env
+# =====================================================================
 
-# x-common-args: &common-args
-#   VERSION: ${VERSION:-latest}
-#   BUILD_DATE: ${BUILD_DATE:-unknown}
-#   REVISION: ${REVISION:-unknown}
+x-common-args: &common-args
+  args:
+    BUILD_DATE: ${BUILD_DATE}
+    VERSION: ${VERSION}
 
+# x-common-env: &common-env
+#   envirement:
+#     mode=production
+
+# =====================================================================
 services:
-  # ==========================================================
-  #
-  # ==========================================================
   proxy:
     build:
-      target: production
-      context: ./services/proxy
-      dockerfile: Dockerfile
+      <<: [*common-args]
+    image: matcha_proxy_image:${VERSION:-latest}-prod
     env_file:
       - ./services/proxy/.env.prod
+    networks:
+      - web_network
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: always
 
-  # ==========================================================
-  #
-  # ==========================================================
   frontend:
     build:
+      <<: [*common-args]
       target: production
-      context: ./services/frontend
-      dockerfile: Dockerfile
     image: matcha_frontend_image:${VERSION:-latest}-prod
     env_file:
       - ./services/frontend/.env.prod
+    networks:
+    - web_network
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: always
 
-  # ==========================================================
-  #
-  # ==========================================================
   backend:
     build:
+      <<: [*common-args]
       target: production
-      context: ./services/backend
-      dockerfile: Dockerfile
     image: matcha_backend_image:${VERSION:-latest}-prod
     env_file:
       - ./services/backend/.env.prod
+    networks:
+      - web_network
+      - data_network
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: always
 
-  # ==========================================================
-  #
-  # ==========================================================
   database:
+    build:
+      <<: [*common-args]
+    image: matcha_database_image:${VERSION:-latest}-prod
     env_file:
       - ./services/database/.env.prod
+    networks:
+      - data_network
+    restart: always
+
+# ==========================================================
+# network definition for the prod env
+# ==========================================================
+networks:
+  web_network:
+    driver: bridge
+
+  data_network:
+    driver: bridge
+    internal: true

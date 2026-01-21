@@ -1,58 +1,84 @@
-# ==========================================================
-#
-#
-# ==========================================================
+# =====================================================================
+# name: docker-compose.override.yml
+# description: this compose file is added into base for development env
+# =====================================================================
 
+# x-common-env: &common-env
+#   envirement:
+#     mode=devolopement
+
+# ==========================================================
 services:
-  # ==========================================================
-  #
-  # ==========================================================
-  # proxy:
-  #   env_file:
-  #     - ./services/proxy/.env
-  #   ports:
-  #     - "8080:80"
-  #     - "4433:443"
+  proxy:
+    # <<: *common-env
+    profiles: ["ops"]
+    image: matcha_proxy_image:${VERSION:-latest}-dev
+    env_file:
+      - ./services/proxy/.env
+    networks:
+      - web_network
+    ports:
+      - "8080:80"
+      - "4433:443"
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_started
+    restart: unless-stopped
 
-  # ==========================================================
-  #
-  # ==========================================================
-  # frontend:
-  #   build:
-  #     target: development
-  #     context: ./services/frontend
-  #     dockerfile: Dockerfile
-  #   image: matcha_frontend_image:${VERSION:-latest}-dev
-  #   env_file:
-  #     - ./services/frontend/.env
-  #   volumes:
-  #     - ./services/frontend:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - "5173:5173"
-
-  # ==========================================================
-  #
-  # ==========================================================
-  backend:
+  frontend:
+    profiles: ["full", "frontend", "ops"]
     build:
       target: development
-      context: ./services/backend
-      dockerfile: Dockerfile
+    image: matcha_frontend_image:${VERSION:-latest}-dev
+    env_file:
+      - ./services/frontend/.env
+    volumes:
+      - ./services/frontend:/app
+      - /app/node_modules
+    networks:
+      - web_network
+    ports:
+      - "5173:5173"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+  backend:
+    profiles: ["full", "backend", "ops"]
+    build:
+      target: development
     image: matcha_backend_image:${VERSION:-latest}-dev
     env_file:
       - ./services/backend/.env
     volumes:
       - ./services/backend:/app
       - /app/node_modules
+    networks:
+      - web_network
     ports:
       - "3000:3000"
+    depends_on:
+      database:
+        condition: service_started
+    restart: unless-stopped
 
-  # ==========================================================
-  #
-  # ==========================================================
   database:
+    profiles: ["full", "backend", "ops"]
+    image: matcha_database_image:${VERSION:-latest}-dev
     env_file:
       - ./services/database/.env
+    networks:
+      - web_network
     ports:
       - "5432:5432"
+    restart: unless-stopped
+
+# ==========================================================
+# network definition for the dev env
+# ==========================================================
+networks:
+  web_network:
+    driver: bridge

@@ -9,18 +9,23 @@ BLUE    := \033[0;34m
 NC      := \033[0m
 ### END COLOR CONFIG
 
+# ======================================================================================
+# docker compose configuration
+# ======================================================================================
+
+COMPOSE_PROJECT := matcha_42
+
+COMPOSE_BASE := docker-compose.yml
 COMPOSE_DEV  := docker-compose.override.yml
 COMPOSE_PROD := docker-compose.prod.yml
 
-project_name    := $(shell basename "$(PWD)")
-COMPOSE_PROJECT := $(project_name)
-
-.DEFAULT_GOAL := help
+COMPOSE_ENV := versioning.env
 
 # ======================================================================================
 # ENVIRONMENT SELECTION
 # Usage: make <target> env=prod
 # ======================================================================================
+.DEFAULT_GOAL := help
 
 ifeq ($(env),prod)
     COMPOSE_FILE := $(COMPOSE_PROD)
@@ -33,7 +38,7 @@ endif
 # Alert user of mode on every run
 $(info Current Environment: $(MODE_MSG) [File: $(COMPOSE_FILE)])
 
-COMPOSE := docker compose -f "$(COMPOSE_FILE)" -p "$(COMPOSE_PROJECT)" --env-file Versioning.env
+COMPOSE := docker compose -f "$(COMPOSE_BASE)" -f "$(COMPOSE_FILE)" -p "$(COMPOSE_PROJECT)" --env-file "$(COMPOSE_ENV)"
 
 # ======================================================================================
 # HELP & GENERAL USAGE
@@ -71,21 +76,21 @@ up: down ## Start all services in attached mode
 	@echo -e "$(GREEN)Services are now running in detached mode.$(NC)"
 	@$(MAKE) logs
 
-start: ## Start all stopped services
-	@echo -e "$(GREEN)Starting services...$(NC)"
-	@$(COMPOSE) up -d --remove-orphans
-
 down: ## Stop and remove all services and networks defined in the compose file
 	@echo -e "$(RED)Shutting down services ... Powering down.$(NC)"
 	@$(COMPOSE) down --remove-orphans
 
-restart: ## Restart all services
-	@echo -e "$(YELLOW)Rebooting services...$(NC)"
-	@$(COMPOSE) restart
+start: ## Start all stopped services
+	@echo -e "$(GREEN)Starting services...$(NC)"
+	@$(COMPOSE) up -d --remove-orphans
 
 stop: ## Stop all services without removing them
 	@echo -e "$(YELLOW)Stopping services...$(NC)"
 	@$(COMPOSE) stop
+
+restart: ## Restart all services
+	@echo -e "$(YELLOW)Rebooting services...$(NC)"
+	@$(COMPOSE) restart
 
 # ======================================================================================
 # BUILDING IMAGES
@@ -109,18 +114,6 @@ ps: ## List all running containers
 logs: ## Follow logs for specified service (make logs service=core) or all
 	@echo -e "$(BLUE)Tapping into log stream...$(NC)"
 	@$(COMPOSE) logs -f --tail="100" $(service)
-
-inspect: ## Inspect a running service container (make inspect service=core)
-	@if [ -z "$(service)" ]; then \
-		echo -e "$(RED)Error: Service name required. Usage: make inspect service=<service_name>$(NC)"; \
-		exit 1; \
-	fi
-	@_container_id=$$(docker-compose -f $(COMPOSE_FILE) ps -q $(service) | head -n 1); \
-	if [ -z "$$_container_id" ]; then \
-		echo -e "$(RED)Service $(service) not found or not running.$(NC)"; \
-		exit 1; \
-	fi; \
-	docker inspect $$_container_id
 
 ssh: ## Shell into a container (make ssh service=core)
 	@if [ -z "$(service)" ]; then \
@@ -155,7 +148,7 @@ update-keys: ## Update SOPS encryption keys (rotate) for files in secrets/
 # ======================================================================================
 
 commit: encrypt ## Stage all changes and commit using the safe commit script
-	@./scripts/commit.sh
+
 
 safe-commit: commit ## Alias for commit
 

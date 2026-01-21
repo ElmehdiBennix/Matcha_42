@@ -56,17 +56,21 @@ RUN pnpm prune --prod
 ################################################
 FROM ${NODE_BASE} AS production
 
+ARG TITLE="Matcha"
+ARG DESCRIPTION="A 42 Project dating application"
+ARG BUILD_DATE="unknown"
+ARG VERSION="latest"
+ARG REVISION="unknown"
+ARG SOURCE="domain"
+
+LABEL org.opencontainers.image.title=${TITLE} \
+    org.opencontainers.image.description=${DESCRIPTION} \
+    org.opencontainers.image.source=${SOURCE} \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.version=${VERSION} \
+    org.opencontainers.image.authors=${AUTHOR}
+
 WORKDIR /app
-
-ARG BUILD_DATE
-ARG VERSION
-ARG REVISION
-
-LABEL org.opencontainers.image.title="Matcha" \
-      org.opencontainers.image.description="A 42 Project dating application" \
-      org.opencontainers.image.created=$BUILD_DATE \
-      org.opencontainers.image.version=$VERSION \
-      org.opencontainers.image.revision=$REVISION
 
 ENV NODE_ENV=production
 
