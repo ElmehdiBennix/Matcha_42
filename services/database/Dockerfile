@@ -1,16 +1,12 @@
 FROM postgres:16.6-alpine3.21
 
-LABEL maintainer="your-team@example.com"
+RUN apk update && apk upgrade --no-cache
 
-# Force update packages during build to get latest patches
-# Only do this if you need a patch that isn't in the base image yet.
-# RUN apk update && apk upgrade --no-cache
+COPY init.sql /docker-entrypoint-initdb.d/
 
-# 4. Set the locale (Alpine is minimal, so be explicit)
-ENV LANG=en_US.utf8
+COPY postgresql.conf /etc/postgresql/postgresql.conf
 
-# 5. Production Performance Tuning (Optional)
-# Postgres default config is for low-memory dev machines.
-# You can COPY a custom config file optimized for your server size.
-# COPY postgresql.conf /etc/postgresql/postgresql.conf
-# CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
+  CMD pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} || exit 1
+
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]

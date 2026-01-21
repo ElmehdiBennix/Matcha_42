@@ -1,6 +1,6 @@
 ################################################################################################################
-# sops.sh
-# A script to encrypt and decrypt .env files using sops and age and place the files in the apropriate locations.
+# name: sops.sh
+# description: A script to encrypt and decrypt .env files using sops and age and place the files in the apropriate locations.
 ################################################################################################################
 
 #!/bin/bash
@@ -46,6 +46,17 @@ case $1 in
         done
         echo "Decryption complete."
         ;;
+    "update-keys")
+        echo "Updating sops age keys ..."
+
+        find "$ENC_SECRETS_DIR" -type f -name "*.enc" |
+        while read -r ENC_FILE_PATH; do
+            sops --update-keys "$ENC_FILE_PATH" || continue
+            echo "Updated keys in $ENC_FILE_PATH"
+        done
+        echo "Key update complete."
+
+      ;;
     *)
         echo "Usage: $0 {encrypt|decrypt}"
         exit 1

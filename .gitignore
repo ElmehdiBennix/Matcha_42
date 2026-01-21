@@ -1,7 +1,35 @@
-0_sessions/
+# ignore knowledge base docs and Gemini file
 Docs/knowledge_base/
 GEMINI.md
 
+# Environment variables
 **/.env
-**/.env.prod
-**/!.env.example
+**/.env.*
+!**/.env.example
+
+# Nestjs specific
+**/dist
+**/node_modules
+**/build
+**/tmp
+
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+**/pnpm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/lerna-debug.log*
+
+# temp directory
+**/.temp
+**/.tmp
+
+# OS generated files
+**/.DS_Store
+**/Thumbs.db
+**/desktop.ini
+
+# IDEs and editors
+**/.vscode/

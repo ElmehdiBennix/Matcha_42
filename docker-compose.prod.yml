@@ -3,11 +3,20 @@
 #
 # ==========================================================
 
+# x-common-args: &common-args
+#   VERSION: ${VERSION:-latest}
+#   BUILD_DATE: ${BUILD_DATE:-unknown}
+#   REVISION: ${REVISION:-unknown}
+
 services:
   # ==========================================================
   #
   # ==========================================================
   proxy:
+    build:
+      target: production
+      context: ./services/proxy
+      dockerfile: Dockerfile
     env_file:
       - ./services/proxy/.env.prod
     ports:

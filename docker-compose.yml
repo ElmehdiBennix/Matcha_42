@@ -1,56 +1,53 @@
 # ==========================================================
-#
-#
+# name: BASE Compose file for Matcha Application
+# description: This is the base docker-compose file defining services, volumes, and networks for the Matcha application.
 # ==========================================================
+#TODO: orginize
+# x-common-labels: &common-labels
+#   labels:
+#     project.name: "Matcha"
+#     project.description: "A dating application, built with modern web technologies."
+#     org.opencontainers.image.authors: ${AUTHOR:-unknown}
+#     org.opencontainers.image.source: ${SOURCE:-unknown}
+#     org.opencontainers.image.licenses: ${LICENSE:-unknown}
 
-x-common-labels: &common-labels
-  labels:
-    project.name: ${COMPOSE_PROJECT_NAME:-Matcha}
-    org.opencontainers.image.title: Matcha
-    org.opencontainers.image.description: A 42 Project dating application
-    org.opencontainers.image.authors: ${MAINTAINER_NAME}
-    org.opencontainers.image.version: ${VERSION}
-    org.opencontainers.image.source: ${REPOSITORY_URL}
-    org.opencontainers.image.licenses: ${LICENSE_TYPE}
-
-# ==========================================================
-#
-# ==========================================================
 services:
   # ==========================================================
   #
   # ==========================================================
-  proxy:
-    build:
-      <<: *common-labels
-      context: ./services/proxy
-      dockerfile: Dockerfile
-    image: matcha_proxy_image:${VERSION:-latest}
-    container_name: matcha_proxy
-    networks:
-      - web_network
-    depends_on:
-      - frontend
-      - backend
-    restart: unless-stopped
+#   proxy:
+#     build:
+#     #   <<: *common-labels
+#       context: ./services/proxy
+#       dockerfile: Dockerfile
+#     image: matcha_proxy_image:${VERSION:-latest}
+#     container_name: matcha_proxy
+#     networks:
+#       - web_network
+#     depends_on:
+#       - frontend
+#       - backend
+#     restart: unless-stopped
 
   # ==========================================================
   #
   # ==========================================================
-  frontend:
-    <<: *common-labels
-    container_name: matcha_frontend
-    networks:
-      - web_network
-    depends_on:
-      - backend
-    restart: unless-stopped
+#   frontend:
+#     # build:
+#     #   <<: *common-labels
+#     container_name: matcha_frontend
+#     networks:
+#       - web_network
+#     depends_on:
+#       - backend
+#     restart: unless-stopped
 
   # ==========================================================
   #
   # ==========================================================
   backend:
-    <<: *common-labels
+    # build:
+    #   <<: *common-labels
     container_name: matcha_backend
     networks:
       - web_network
@@ -63,11 +60,10 @@ services:
   #
   # ==========================================================
   database:
-    <<: *common-labels
     build:
+    #   <<: *common-labels
       context: ./services/database
       dockerfile: Dockerfile
-    image: matcha_database_image:${VERSION:-latest}
     container_name: matcha_database
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -80,12 +76,12 @@ services:
 # ==========================================================
 volumes:
   nginx_certs:
-    <<: *common-labels
+    # <<: *common-labels
     name: matcha_nginx_certs_volume
     driver: local
 
   db_data:
-    <<: *common-labels
+    # <<: *common-labels
     name: matcha_postgres_volume
     driver: local
 
