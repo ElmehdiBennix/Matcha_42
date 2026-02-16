@@ -8,6 +8,8 @@ GEMINI.md
 !**/.env.example
 
 # Nestjs specific
+**/.pnpm-store
+**/pnpm-store
 **/dist
 **/node_modules
 **/build
@@ -33,3 +35,49 @@ GEMINI.md
 
 # IDEs and editors
 **/.vscode/
+**/.idea/
+**/*.swp
+**/*.swo
+**/*~
+
+# Test coverage
+**/coverage/
+**/.nyc_output/
+
+# Cache directories
+**/.cache/
+**/.parcel-cache/
+**/.eslintcache
+**/.prettiercache
+**/.tsbuildinfo
+
+# Vite
+**/.vite/
+
+# Vitest
+**/.vitest/
+**/test-results/
+
+# Framework-specific (future-proofing)
+**/.next/
+**/.turbo/
+**/.parcel-cache/
+
+# Local override files
+**/*.local
+
+# macOS extended
+**/.AppleDouble
+**/.LSOverride
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+
+# Windows extended
+**/ehthumbs.db
+**/$RECYCLE.BIN/
+
+# Misc
+**/*.pid
+**/*.seed
+**/*.pid.lock

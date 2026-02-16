@@ -58,10 +58,11 @@ FROM ${NODE_BASE} AS production
 
 ARG TITLE="Matcha"
 ARG DESCRIPTION="A 42 Project dating application"
+ARG SOURCE="domain"
+
 ARG BUILD_DATE="unknown"
 ARG VERSION="latest"
 ARG REVISION="unknown"
-ARG SOURCE="domain"
 
 LABEL org.opencontainers.image.title=${TITLE} \
     org.opencontainers.image.description=${DESCRIPTION} \

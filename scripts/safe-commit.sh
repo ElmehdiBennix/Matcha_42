@@ -19,6 +19,7 @@ if [[ ! $CURRENT_BRANCH =~ $BRANCH_NAME_REGEX ]]; then
     exit 1
 fi
 
+
 # Get commit message from user input the validate it against the regex
 echo "commit message must follow the conventional commit format."
 echo "Format: <type>(<scope>): <description>"

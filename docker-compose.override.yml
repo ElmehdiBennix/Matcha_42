@@ -11,7 +11,7 @@
 services:
   proxy:
     # <<: *common-env
-    profiles: ["ops"]
+    profiles: ["full" ,"ops"]
     image: matcha_proxy_image:${VERSION:-latest}-dev
     env_file:
       - ./services/proxy/.env

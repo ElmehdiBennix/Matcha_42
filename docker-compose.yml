@@ -47,9 +47,11 @@ services:
 # ==========================================================
 volumes:
   nginx_certs:
+    <<: *common-labels
     name: matcha_nginx_certs_volume
     driver: local
 
   db_data:
+    <<: *common-labels
     name: matcha_postgres_volume
     driver: local

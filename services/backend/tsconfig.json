@@ -38,7 +38,15 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@core/*": ["core/*"],
+      "@modules/*": ["modules/*"],
+      "@shared/*": ["shared/*"],
+      "@config/*": ["config/*"],
+      "@db/*": ["db/*"]
+    }
     },
 
     "include": ["src/**/*"],

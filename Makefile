@@ -148,7 +148,7 @@ update-keys: ## Update SOPS encryption keys (rotate) for files in secrets/
 # ======================================================================================
 
 commit: encrypt ## Stage all changes and commit using the safe commit script
-
+	@./scripts/safe-commit.sh
 
 safe-commit: commit ## Alias for commit
 
